@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+
+use 5.010;
+use strict;
+use warnings;
+
+my $current_branch = `git rev-parse --abbrev-ref HEAD`;
+chomp $current_branch;
+
+open my $fh, '-|', 'git', 'reflog' or die "Can't get reflog: $!";
+
+my $entry = 0;
+my $displayed = 0;
+my %seen = ($current_branch => 1);
+while (<$fh>)
+{
+    if (/checkout: moving from (\S+)/)
+    {
+        $entry++;
+
+        next if $seen{$1}++;
+
+        say "\@{-$entry} : $1";
+
+        last if ++$displayed > 10
+    }
+
+}
