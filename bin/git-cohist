@@ -20,7 +20,10 @@ while (<$fh>)
 
         next if $seen{$1}++;
 
-        say "\@{-$entry} : $1";
+        # seems that git doesn't actually go back more than 9 anyway.
+        my $prefix = $entry < 10 ? "\@{-$entry}" : " " x 5;
+
+        say "$prefix : $1";
 
         last if ++$displayed > 10
     }
