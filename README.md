@@ -28,7 +28,7 @@ See [how to include another gitconfig in yours](https://stackoverflow.com/questi
 ## bin
 
 Tools that add to git in ways more complex than should be in a simple alias. Add this
-directory to your to enable.
+directory to your PATH to enable.
 
 * git-cohist
 
