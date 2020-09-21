@@ -4,6 +4,17 @@ use 5.010;
 use strict;
 use warnings;
 
+## USAGE:
+#
+# no parameters = list of branch switch history
+# number = that many entries back to switch to
+# "/..../" = regex to use to find branch name - first match is switched to
+my $target_branch = shift // '';
+$target_branch =~ s/^\@\{//;
+$target_branch =~ s/\}$//;
+$target_branch =~ s/^-//;
+my $target_regex = $target_branch =~ m[^/(.*)/$] ? $1 : undef;
+
 my $current_branch = `git rev-parse --abbrev-ref HEAD`;
 chomp $current_branch;
 
@@ -16,14 +27,24 @@ while (<$fh>)
 {
     if (/checkout: moving from (\S+)/)
     {
+        my $br = $1;
         $entry++;
 
-        next if $seen{$1}++;
+        if ($target_branch eq '-' or
+            $target_branch eq $entry or
+            ($target_regex && $br =~ $target_regex) )
+        {
+            exec("git", "switch", $br);
+        }
+
+        next if $seen{$br}++;
 
         # seems that git doesn't actually go back more than 9 anyway.
-        my $prefix = $entry < 10 ? "\@{-$entry}" : " " x 5;
+        my $prefix = $entry < 10 ? "\@{-$entry}" :
+            $target_branch ? "  -$entry" :
+                            " " x 5;
 
-        say "$prefix : $1";
+        say "$prefix : $br" unless $target_branch and $target_branch eq '-?' || $target_branch eq '-all';
 
         last if ++$displayed > 10
     }
