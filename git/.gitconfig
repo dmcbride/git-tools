@@ -7,6 +7,7 @@
    hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
    ff = merge --ff-only
    pushu = !git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
+   cp = cherry-pick
 
 [color]
    branch = auto
