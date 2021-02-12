@@ -4,9 +4,11 @@
    ci = commit
    st = status
    br = branch
+   sw = switch
    hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
    ff = merge --ff-only
-   pushu = !git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
+# automatically create the brance upstream. Defaults to origin.
+   pushu = !git push --set-upstream $(git config checkout.defaultRemote || echo origin) $(git rev-parse --abbrev-ref HEAD)
    cp = cherry-pick
 
 [color]

@@ -23,7 +23,8 @@ some are a bit more savings.
 * pushu
 
   Sometimes I create my branch locally and then want to push it upstream. This
-  combines both into one.
+  combines both into one.  If you have `checkout.defaultRemote` set, will use that
+  upstream instead.
 
 See [how to include another gitconfig in yours](https://stackoverflow.com/questions/1557183/is-it-possible-to-include-a-file-in-your-gitconfig).
 
