@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
 use 5.010;
-use strict;
 use warnings;
 
 ## USAGE:
@@ -10,10 +9,12 @@ use warnings;
 # number = that many entries back to switch to
 # "/..../" = regex to use to find branch name - first match is switched to
 my $target_branch = shift // '';
+my $target_regex = $target_branch;
 $target_branch =~ s/^\@\{//;
 $target_branch =~ s/\}$//;
 $target_branch =~ s/^-//;
-my $target_regex = $target_branch =~ m[^/(.*)/$] ? $1 : undef;
+
+$target_regex = undef if $target_regex =~ /^-(\?|all)/;
 
 my $current_branch = `git rev-parse --abbrev-ref HEAD`;
 chomp $current_branch;
