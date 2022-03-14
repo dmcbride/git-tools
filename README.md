@@ -33,7 +33,7 @@ See [how to include another gitconfig in yours](https://stackoverflow.com/questi
 Tools that add to git in ways more complex than should be in a simple alias. Add this
 directory to your PATH to enable.
 
-* git-cohist
+* git-swhist
 
   With git taking `-` or `@{-2}` as short forms for recently checked out branches,
   the question is, what was your branch 5 checkouts ago anyway? This outputs a brief
