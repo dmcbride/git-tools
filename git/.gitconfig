@@ -10,6 +10,8 @@
 # automatically create the brance upstream. Defaults to origin.
    pushu = !git push --set-upstream $(git config checkout.defaultRemote || echo origin) $(git rev-parse --abbrev-ref HEAD)
    cp = cherry-pick
+   # switches and pulls the branch, but exits with error if there are uncommitted changes
+   swp = "!f() { git switch $1 && git pull || (git fetch && exit 1); }; f"
 
 [color]
    branch = auto
