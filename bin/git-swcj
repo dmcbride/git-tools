@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+
+# git-swcj - switch/create git branch using jira issue key.
+
+my $jira_prefix = `git config --get jira.prefix`;
+chomp $jira_prefix;
+
+if ($jira_prefix eq "") {
+    print "No jira prefix set. Please set it using:\n";
+    print "git config jira.prefix <jira_prefix>\n";
+    exit 1;
+}
+
+if ($jira_prefix !~ /^[A-Z]+$/) {
+    print "Invalid jira prefix. Please set it using:\n";
+    print "git config jira.prefix <jira_prefix>\n";
+    exit 1;
+}
+
+# concatenate the rest of the command into a single string with dashes
+my $branch_name = join("-", @ARGV);
+
+system(qw(git switch -c), $branch_name) == 0
+    or die "Failed to create branch: $!";

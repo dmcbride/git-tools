@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+
+use 5.010;
+
+# git-swj - switch git branch using jira issue key.
+
+my $jira_prefix = `git config --get jira.prefix`;
+chomp $jira_prefix;
+
+if ($jira_prefix eq "") {
+    say "No jira prefix set. Please set it using:";
+    say "git config jira.prefix <jira_prefix>";
+    exit 1;
+}
+
+my $number = shift @ARGV;
+if ($number eq "") {
+    say "No issue number provided. Please provide an issue number.";
+    exit 1;
+}
+
+if ($number !~ /^\d+$/) {
+    say qq[Invalid issue number. Please provide a valid issue number. (Exclude the prefix, "$jira_prefix-")];
+    exit 1;
+}
+
+my $branch_name_match = @ARGV ? join("-", @ARGV) : undef;
+
+# find a branch name that starts with the jira prefix and issue number, and, if we have a branch name match, also matches that
+my @branch_names = `git branch --list "$jira_prefix-$number-*"`;
+chomp @branch_names;
+
+@branch_names = map { s/^[+*]?\s*//r } @branch_names; # remove leading whitespace
+@branch_names = map { s/\s*$//r } @branch_names; # remove trailing whitespace
+
+@branch_names = grep /$branch_name_match/, @branch_names if $branch_name_match; # filter by branch name match
+
+if (@branch_names == 0) {
+    say "No matching branches found.";
+    exit 1;
+} elsif (@branch_names == 1) {
+    say "Switching to branch: $branch_names[0]";
+    system(qw(git switch), $branch_names[0]) == 0
+        or die "Failed to switch branch: $!";
+} else {
+    say "Multiple branches found:";
+    say join("\n", @branch_names);
+    exit 1;
+}

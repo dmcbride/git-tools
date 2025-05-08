@@ -51,3 +51,21 @@ directory to your PATH to enable.
   And if the option is `/.../`, then it will use that regex to find the most recently
   used branch that matches, and switch to that branch. Useful if your branch names have
   non-overlapping unique names, such as Jira tags (usually).
+
+* git-swj
+
+  A combination of switch and Jira. First, add a `jira.prefix` configuration setting to
+  your repository. Then you can pass in the jira number, and this will switch to the
+  branch starting with `prefix-number` if there is one. Note that `prefix-100` will not
+  match `prefix-1001`.
+
+  If you pass in additional parameters, this will be considered a partial match for the
+  rest of the branch name, useful for cases where you have multiple branches for a single
+  Jira issue.
+
+* git-swcj
+
+  A combination of switch-create and Jira. First, add a `jira.prefix` configuration
+  setting to your repository. Then you pass in the jira number and the rest of the
+  branch name. You can combine these with dashes into a single word, or space-separate
+  and the tool will convert each word break into a dash.
