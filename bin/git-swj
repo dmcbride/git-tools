@@ -27,15 +27,22 @@ if ($number !~ /^\d+$/) {
 my $branch_name_match = @ARGV ? join("-", @ARGV) : undef;
 
 # find a branch name that starts with the jira prefix and issue number, and, if we have a branch name match, also matches that
-my @branch_names = `git branch --list "$jira_prefix-$number-*"`;
-chomp @branch_names;
-
-@branch_names = map { s/^[+*]?\s*//r } @branch_names; # remove leading whitespace
-@branch_names = map { s/\s*$//r } @branch_names; # remove trailing whitespace
+my @branch_names = get_branches_matching("$jira_prefix-$number-*");
 
 @branch_names = grep /$branch_name_match/, @branch_names if $branch_name_match; # filter by branch name match
 
 if (@branch_names == 0) {
+    if (!defined $branch_name_match) {
+        # maybe we have a branch that starts with the jira prefix and issue number, but nothing beyond that.
+        @branch_names = get_branches_matching("$jira_prefix-$number");
+        if (@branch_names == 1) {
+            say "Switching to branch: $branch_names[0]";
+            system(qw(git switch), $branch_names[0]) == 0
+                or die "Failed to switch branch: $!";
+            exit 0;
+        }
+    }
+
     say "No matching branches found.";
     exit 1;
 } elsif (@branch_names == 1) {
@@ -46,4 +53,17 @@ if (@branch_names == 0) {
     say "Multiple branches found:";
     say join("\n", @branch_names);
     exit 1;
+}
+
+sub get_branches_matching
+{
+    my $prefix = shift;
+
+    my @branches = `git branch --list "$prefix"`;
+    chomp @branches;
+
+    @branches = map { s/^[+*]?\s*//r } @branches; # remove leading whitespace
+    @branches = map { s/\s*$//r } @branches; # remove trailing whitespace
+
+    return @branches;
 }

@@ -18,7 +18,7 @@ if ($jira_prefix !~ /^[A-Z]+$/) {
 }
 
 # concatenate the rest of the command into a single string with dashes
-my $branch_name = join("-", @ARGV);
+my $branch_name = join("-", $jira_prefix, @ARGV);
 
 system(qw(git switch -c), $branch_name) == 0
     or die "Failed to create branch: $!";
